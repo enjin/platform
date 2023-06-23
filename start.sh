@@ -171,7 +171,7 @@ check_docker_is_installed
 check_compose_is_installed
 check_docker_is_running
 
-git submodules update --init --recursive
+git submodule update --init --recursive
 
 check_has_app_key
 check_has_basic_token
