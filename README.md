@@ -7,8 +7,7 @@ Enjin Platform is the most powerful and advanced open-source framework for build
 ## Quick start
 
 1. If you haven't cloned the project yet, please clone it in any folder you want.
-2. Run `git submodule update --init --recursive` to get the submodules.
-3. Now you can run our starter script `./start.sh` to start the application.
+2. Now you can run our starter script `./start.sh` to start the application.
 
 ## Dependencies
 

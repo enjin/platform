@@ -17,7 +17,7 @@ services:
       - "${MYSQL_EXTERNAL_PORT}:3306"
 
   redis:
-    image: "redis:alpine"
+    image: redis:alpine
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -27,6 +27,7 @@ services:
       - "${REDIS_EXTERNAL_PORT}:6379"
 
   decoder:
+    image: enjin/decoder:latest
     build:
       context: ./platform-decoder
     restart: unless-stopped
@@ -99,6 +100,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   daemon:
+    image: enjin/daemon:latest
     build:
       context: .
       dockerfile: configs/daemon/Dockerfile

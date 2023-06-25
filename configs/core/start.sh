@@ -5,7 +5,7 @@ role=${CONTAINER_ROLE:-app}
 
 if [ "$role" = "ingest" ]; then
     echo "Running ingest..."
-    (cd /var/www/html && php artisan cache:clear && php artisan config:cache && php artisan migrate && php artisan platform:ingest)
+    (cd /var/www/html && php artisan cache:clear && php artisan config:cache && php artisan migrate && php artisan platform:sync && php artisan platform:ingest)
 elif [ "$role" = "app" ]; then
     echo "Caching configuration..."
     cd /var/www/html && php artisan cache:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache

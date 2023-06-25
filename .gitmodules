@@ -1,18 +1,6 @@
-[submodule "platform-core"]
-	path = platform-core
-	url = git@github.com:enjin/platform-core.git
 [submodule "wallet-daemon"]
 	path = wallet-daemon
 	url = git@github.com:enjin/wallet-daemon.git
-[submodule "platform-beam"]
-	path = platform-beam
-	url = git@github.com:enjin/platform-beam.git
 [submodule "platform-decoder"]
 	path = platform-decoder
 	url = git@github.com:enjin/platform-decoder.git
-[submodule "platform-fuel-tanks"]
-	path = platform-fuel-tanks
-	url = git@github.com:enjin/platform-fuel-tanks.git
-[submodule "platform-marketplace"]
-	path = platform-marketplace
-	url = git@github.com:enjin/platform-marketplace.git

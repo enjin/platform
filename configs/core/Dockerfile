@@ -26,16 +26,8 @@ RUN composer create-project laravel/laravel:^10.0 laravel-application
 COPY configs/core/composer.json /app/laravel-application
 COPY configs/core/config/ /app/laravel-application/config/
 
-# Stage: copy-repo
-FROM create-application as sources
-
-COPY platform-core/ /app/laravel-application/packages/platform-core/
-COPY platform-beam/ /app/laravel-application/packages/platform-beam/
-COPY platform-fuel-tanks/ /app/laravel-application/packages/platform-fuel-tanks/
-COPY platform-marketplace/ /app/laravel-application/packages/platform-marketplace/
-
 # Stage: composer-update
-FROM sources as composer-update
+FROM create-application as composer-update
 
 RUN cd laravel-application && \
     composer update --prefer-dist --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
@@ -45,7 +37,7 @@ RUN cd /app/laravel-application/vendor/gmajor/sr25519-bindings/go && go build -b
 
 # Stage: http setup
 
-FROM sources as http-setup
+FROM create-application as http-setup
 
 # Set apache to listen on port 8000.
 RUN sed -i "s/Listen 80/Listen 8000/" /etc/apache2/ports.conf
@@ -75,10 +67,10 @@ COPY configs/core/php /usr/local/etc/php/conf.d
 COPY configs/core/supervisor /etc/supervisor/conf.d
 
 # Stage: platform-core
-FROM http-setup as platform-core
+FROM http-setup as enjin-platform
 
 LABEL org.opencontainers.image.source=https://github.com/enjin/platform
-LABEL org.opencontainers.image.description="Platform - Ingest, Websocket, App, Beam, Fuel Tanks, Marketplace"
+LABEL org.opencontainers.image.description="Enjin Platform - The most powerful and advanced open-source framework for building NFT platforms."
 LABEL org.opencontainers.image.licenses=LGPL-3.0-only
 
 COPY configs/core/start.sh /usr/local/bin/start

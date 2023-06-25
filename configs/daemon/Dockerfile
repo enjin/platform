@@ -2,7 +2,7 @@ FROM debian as sources
 
 WORKDIR /wallet
 
-COPY /efinity-wallet-daemon .
+COPY /wallet-daemon .
 
 FROM rust:1.59.0-buster as cargo-build
 
@@ -30,10 +30,10 @@ RUN rm -rf /var/lib/apt/lists/*
 # Copy wallet daemon binary.
 COPY --from=cargo-build /wallet/target/$PROFILE/wallet /usr/local/bin
 
-# Stage: efinity-wallet-daemon
-FROM slim as efinity-wallet-daemon
+# Stage: wallet-daemon
+FROM slim as wallet-daemon
 
-LABEL org.opencontainers.image.source=https://github.com/enjin/efinity-wallet-daemon
+LABEL org.opencontainers.image.source=https://github.com/enjin/wallet-daemon
 LABEL org.opencontainers.image.description="Platform - Efinity Wallet Daemon"
 LABEL org.opencontainers.image.licenses=LGPL-3.0-only
 
