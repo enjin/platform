@@ -4,7 +4,7 @@ detect_user_os() {
   case "$OSTYPE" in
     darwin*)  PLATFORM_OS="macOS"  ;;
     linux*)   PLATFORM_OS="linux"  ;;
-    *)        echo "We only support macOS and Linux at this moment" | exit 1 ;;
+    *)        echo "Our start script only supports macOS and Linux at this moment" | exit 1 ;;
   esac
 }
 
@@ -171,7 +171,7 @@ check_docker_is_installed
 check_compose_is_installed
 check_docker_is_running
 
-git submodule update --init --recursive
+git submodule update --init
 
 check_has_app_key
 check_has_basic_token
@@ -186,7 +186,7 @@ read start_services
 if [ "$start_services" != "${start_services#[Yy]}" ] ;then
     docker compose build
     docker compose up -d
-    echo "Your platform is now running, please visit http://localhost:8000/graphiql"
+    echo "Your Enjin Platform is now running, please visit: http://localhost:8000/graphiql"
 else
     docker compose down
     echo "Please run this script again when you are ready"
