@@ -46,12 +46,6 @@
         "phpunit/phpunit": "^10.0",
         "spatie/laravel-ignition": "^2.0"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/leonardocustodio/laravel-graphiql.git"
-        }
-    ],
     "autoload": {
         "psr-4": {
             "App\\": "app/",
