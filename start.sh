@@ -22,6 +22,28 @@ generate_app_key() {
   echo "Done, your key is: $LARAVEL_KEY"
 }
 
+check_has_app_url() {
+    # Check if user already has APP_URL set
+    APP_URL=$(awk '$1 ~ /^APP_URL/' configs/core/.env | cut -d "=" -f 2)
+    if [ -z "$APP_URL" ]; then
+        echo "For a few things to work, we need to know your platform URL"
+        echo "Please input the URL: (e.g. http://127.0.0.1)"
+        read APP_URL
+
+        if [ -z "$APP_URL" ]; then
+          APP_URL="http:\/\/127.0.0.1"
+        else
+          APP_URL=$(echo "$APP_URL" | sed 's;/;\\/;g')
+        fi
+
+        if [ "$PLATFORM_OS" = "macOS" ]; then
+          sed -i '' -e "s/^APP_URL=/APP_URL=$APP_URL/g" configs/core/.env
+        else
+          sed -i "s/^APP_URL=/APP_URL=\"$APP_URL\"/g" configs/core/.env
+        fi
+    fi
+}
+
 check_has_app_key() {
   # Check if user already has APP_KEY set
   APP_KEY=$(awk '$1 ~ /^APP_KEY/' configs/core/.env | cut -d "=" -f 2)
@@ -106,7 +128,7 @@ get_daemon_address() {
     if [ -z "$DAEMON_ACCOUNT" ]; then
         echo "Let's get your wallet daemon address, please wait..."
         (docker compose up -d daemon)
-        WALLET_ADDRESS=$(docker compose logs daemon 2>&1 | grep "Rocfinity address:" | awk '{print $NF}' | tail -n 1)
+        WALLET_ADDRESS=$(docker compose logs daemon 2>&1 | grep "Efinity:" | awk '{print $NF}' | tail -n 1)
         echo "Your wallet daemon address is: $WALLET_ADDRESS"
 
         if [ "$PLATFORM_OS" = "macOS" ]; then
@@ -173,6 +195,7 @@ check_docker_is_running
 
 git submodule update --init
 
+check_has_app_url
 check_has_app_key
 check_has_basic_token
 check_has_daemon_password
