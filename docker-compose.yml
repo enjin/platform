@@ -107,8 +107,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./configs/daemon/store:/opt/app/storage
-      - ./configs/daemon/config.json:/opt/app/config.json
-      - ./configs/daemon/.env:/usr/local/bin/.env
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
