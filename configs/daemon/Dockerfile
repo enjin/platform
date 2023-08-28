@@ -23,7 +23,7 @@ ARG PROFILE=release
 
 # Reqwest needs libssl and curl is needed to install the ca-certificates.
 RUN apt-get update && \
-    apt-get install -y libssl-dev wait-for-it jq curl zip
+    apt-get install -y libssl-dev wait-for-it jq curl zip dos2unix
 
 RUN rm -rf /var/lib/apt/lists/*
 
@@ -37,6 +37,13 @@ LABEL org.opencontainers.image.source=https://github.com/enjin/wallet-daemon
 LABEL org.opencontainers.image.description="Platform - Efinity Wallet Daemon"
 LABEL org.opencontainers.image.licenses=LGPL-3.0-only
 
+
+COPY configs/daemon/config.json /opt/app/config.json
+COPY configs/daemon/.env /usr/local/bin/.env
 COPY configs/daemon/start.sh /usr/local/bin/start
+
+RUN dos2unix /opt/app/config.json
+RUN dos2unix /usr/local/bin/.env
+RUN dos2unix /usr/local/bin/start
 
 CMD ["/usr/local/bin/start"]

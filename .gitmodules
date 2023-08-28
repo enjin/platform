@@ -1,6 +1,6 @@
 [submodule "wallet-daemon"]
 	path = wallet-daemon
-	url = git@github.com:enjin/wallet-daemon.git
+	url = https://github.com/enjin/wallet-daemon.git
 [submodule "platform-decoder"]
 	path = platform-decoder
-	url = git@github.com:enjin/platform-decoder.git
+	url = https://github.com/enjin/platform-decoder.git

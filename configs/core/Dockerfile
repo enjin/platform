@@ -5,7 +5,7 @@ FROM php:apache-buster as setup-web-server
 RUN apt-get update -y && \
     apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev python2 && \
     apt-get install -y libpq-dev libgmp-dev libsodium-dev libmemcached-dev zlib1g-dev wait-for-it libffi-dev golang-go && \
-    apt-get install -y inotify-tools libcurl4-openssl-dev libpq-dev libssl-dev supervisor
+    apt-get install -y inotify-tools libcurl4-openssl-dev libpq-dev libssl-dev supervisor dos2unix
 
 # Install node and npm
 RUN curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
@@ -55,6 +55,7 @@ COPY --from=composer-update /app/laravel-application /var/www/html
 
 # Copy envs.
 COPY configs/core/.env /var/www/html/.env
+RUN dos2unix /var/www/html/.env
 
 # Set permissions and ownership.
 RUN chmod 777 -R /var/www/html/storage/
@@ -79,6 +80,8 @@ LABEL org.opencontainers.image.description="Enjin Platform - The most powerful a
 LABEL org.opencontainers.image.licenses=LGPL-3.0-only
 
 WORKDIR /var/www/html
+
 COPY configs/core/start.sh /usr/local/bin/start
+RUN dos2unix /usr/local/bin/start
 
 CMD ["/usr/local/bin/start"]
