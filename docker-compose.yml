@@ -42,6 +42,8 @@ services:
     restart: unless-stopped
     environment:
       CONTAINER_ROLE: app
+    volumes:
+      - ./logs:/var/www/html/storage/logs
     depends_on:
       - database
       - redis
@@ -58,6 +60,8 @@ services:
     restart: unless-stopped
     environment:
       CONTAINER_ROLE: websocket
+    volumes:
+      - ./logs:/var/www/html/storage/logs
     depends_on:
       - database
       - redis
@@ -74,6 +78,8 @@ services:
     restart: unless-stopped
     environment:
       CONTAINER_ROLE: ingest
+    volumes:
+      - ./logs:/var/www/html/storage/logs
     depends_on:
       - database
       - redis
@@ -90,6 +96,8 @@ services:
     restart: unless-stopped
     environment:
       CONTAINER_ROLE: beam
+    volumes:
+      - ./logs:/var/www/html/storage/logs
     depends_on:
       - database
       - redis

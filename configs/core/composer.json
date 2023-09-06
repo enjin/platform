@@ -21,6 +21,7 @@
     ],
     "require": {
         "php": "^8.1|^8.2",
+        "beyondcode/laravel-websockets": "^1.0",
         "enjin/platform-core": "*",
         "enjin/platform-beam": "*",
         "enjin/platform-fuel-tanks": "*",
@@ -31,8 +32,8 @@
         "laravel/horizon": "^5.0",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.0",
-        "beyondcode/laravel-websockets": "^1.0",
-        "pusher/pusher-php-server": "^7.0"
+        "pusher/pusher-php-server": "^7.0",
+        "opcodesio/log-viewer": "^3.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
