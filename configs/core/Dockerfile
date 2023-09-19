@@ -44,9 +44,6 @@ RUN cd /app/laravel-application/vendor/gmajor/sr25519-bindings/go && go build -b
 
 FROM create-application as http-setup
 
-# Set apache to listen on port 8000.
-RUN sed -i "s/Listen 80/Listen 8000/" /etc/apache2/ports.conf
-
 # Set ServerName to be localhost.
 RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf
 

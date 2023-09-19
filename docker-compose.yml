@@ -48,7 +48,7 @@ services:
       - database
       - redis
     ports:
-      - "${APP_EXTERNAL_PORT}:8000"
+      - "${APP_EXTERNAL_PORT}:80"
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
