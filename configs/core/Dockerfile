@@ -7,6 +7,10 @@ RUN apt-get update -y && \
     apt-get install -y libpq-dev libgmp-dev libsodium-dev libmemcached-dev zlib1g-dev wait-for-it libffi-dev golang-go && \
     apt-get install -y inotify-tools libcurl4-openssl-dev libpq-dev libssl-dev supervisor dos2unix
 
+# Install imagick
+RUN apt-get install -y libmagickwand-dev --no-install-recommends && \
+    pecl install imagick
+
 # Install node and npm
 RUN curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
 RUN bash /tmp/nodesource_setup.sh
@@ -14,11 +18,10 @@ RUN apt-get install -y nodejs
 
 COPY scripts/ /usr/scripts/
 
-RUN docker-php-ext-install ffi pdo pdo_mysql gmp bcmath sodium mysqli sockets pcntl
+RUN docker-php-ext-install ffi pdo pdo_mysql gmp bcmath sodium mysqli sockets pcntl gd
 
 RUN /usr/scripts/install-php-redis.sh
-
-RUN docker-php-ext-enable redis
+RUN docker-php-ext-enable redis imagick
 
 # Stage: create-application
 FROM setup-web-server as create-application
