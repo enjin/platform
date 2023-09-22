@@ -30,6 +30,7 @@ RUN composer create-project laravel/laravel:^10.0 laravel-application
 
 COPY configs/core/composer.json /app/laravel-application
 COPY configs/core/config/ /app/laravel-application/config/
+COPY configs/core/routes/ /app/laravel-application/routes/
 
 # Stage: composer-update
 FROM create-application as composer-update
