@@ -37,7 +37,6 @@ LABEL org.opencontainers.image.source=https://github.com/enjin/wallet-daemon
 LABEL org.opencontainers.image.description="Platform - Efinity Wallet Daemon"
 LABEL org.opencontainers.image.licenses=LGPL-3.0-only
 
-
 COPY configs/daemon/config.json /opt/app/config.json
 COPY configs/daemon/.env /usr/local/bin/.env
 COPY configs/daemon/start.sh /usr/local/bin/start
