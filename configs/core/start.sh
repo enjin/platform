@@ -8,11 +8,17 @@ if [ "$role" = "ingest" ]; then
     (php artisan cache:clear && php artisan config:cache && php artisan migrate && php artisan platform:sync && php artisan platform:ingest)
 elif [ "$role" = "app" ]; then
     echo "Caching configuration..."
+    chown -hR www-data:www-data /var/www/html/storage/logs || true
+    APP_KEY=$(awk '$1 ~ /^APP_KEY/' .env | cut -d "=" -f 2)
+    if [ -z "$APP_KEY" ]; then
+      php artisan key:generate
+    fi
     php artisan log-viewer:publish && php artisan platform-ui:install --route="/" --tenant="no" --skip && php artisan cache:clear && php artisan config:cache && php artisan route:cache && php artisan view:cache
     echo "Running apache..."
     exec apache2-foreground
 elif [ "$role" = "websocket" ]; then
     echo "Running queue and websocket..."
+    chown -hR www-data:www-data /var/www/html/storage/logs || true
     php artisan cache:clear && php artisan config:cache
     supervisord -n --configuration /etc/supervisor/supervisord.conf
 elif [ "$role" = "beam" ]; then
