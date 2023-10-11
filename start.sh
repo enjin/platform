@@ -27,11 +27,11 @@ check_has_app_url() {
     APP_URL=$(awk '$1 ~ /^APP_URL/' configs/core/.env | cut -d "=" -f 2)
     if [ -z "$APP_URL" ]; then
         echo "For a few things to work, we need to know your platform URL"
-        echo "Please input the URL: (e.g. http://127.0.0.1)"
+        echo "Please input the URL: (e.g. http://127.0.0.1:8000)"
         read APP_URL
 
         if [ -z "$APP_URL" ]; then
-          APP_URL="http:\/\/127.0.0.1"
+          APP_URL="http:\/\/127.0.0.1:8000"
         else
           APP_URL=$(echo "$APP_URL" | sed 's;/;\\/;g')
         fi
@@ -209,7 +209,7 @@ read start_services
 if [ "$start_services" != "${start_services#[Yy]}" ] ;then
     docker compose build
     docker compose up -d
-    echo "Your Enjin Platform is now running, please visit: http://localhost:8000/graphiql"
+    echo "Your Enjin Platform is now running, please visit: http://127.0.0.1:8000"
 else
     docker compose down
     echo "Please run this script again when you are ready"

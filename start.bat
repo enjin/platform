@@ -34,9 +34,9 @@ for /f "tokens=2 delims==" %%i in ('findstr /r /c:"APP_URL=" configs\core\.env')
 :: If not set, prompt the user
 if "%APP_URL%"=="" (
     echo For a few things to work, we need to know your platform URL
-    set /p APP_URL="Please input the URL: (e.g. http://127.0.0.1) "
+    set /p APP_URL="Please input the URL: (e.g. http://127.0.0.1:8000) "
     if "%APP_URL%"=="" (
-        set "APP_URL=http://127.0.0.1"
+        set "APP_URL=http://127.0.0.1:8000"
     )
     powershell -Command "(Get-Content 'configs\core\.env') | ForEach-Object {$_ -replace '\bAPP_URL=.*', 'APP_URL=!APP_URL!'} | Set-Content 'configs\core\.env'"
 )
@@ -227,7 +227,7 @@ set /p start_services=Do you want to start all platform services? (y/n)
 if /i "%start_services%"=="y" (
     docker compose build
     docker compose up -d
-    echo Your Enjin Platform is now running, please visit: http://localhost:8000/graphiql
+    echo Your Enjin Platform is now running, please visit: http://127.0.0.1:8000
 ) else (
     docker compose down
     echo Please run this script again when you are ready
