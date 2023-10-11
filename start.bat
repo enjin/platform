@@ -3,27 +3,6 @@ setlocal enabledelayedexpansion
 
 goto :MAIN
 
-:: Function to generate a new app key and set it in the .env file
-:generate_app_key
-:: Generate a random key
-set "RANDOM_KEY="
-for /l %%i in (1,1,64) do (
-    set /a "rand=!random! %% 16"
-    for %%x in (!rand!) do (
-        set "hexDigit=0123456789ABCDEF"
-        for /f %%d in ("!hexDigit:~%%x,1!") do (
-            set "RANDOM_KEY=!RANDOM_KEY!%%d"
-        )
-    )
-)
-
-:: Set the Laravel key
-set "LARAVEL_KEY=base64:!RANDOM_KEY!"
-:: Replace the APP_KEY in the .env file
-powershell -Command "(Get-Content 'configs\core\.env') | ForEach-Object {$_ -replace '\bAPP_KEY=.*', 'APP_KEY=!LARAVEL_KEY!'} | Set-Content 'configs\core\.env'"
-echo Done, your key is: !LARAVEL_KEY!
-goto :EOF
-
 :: Function to check if the APP_URL is set and prompt the user if not
 :check_has_app_url
 :: Check if APP_URL is already set
@@ -39,26 +18,6 @@ if "%APP_URL%"=="" (
         set "APP_URL=http://127.0.0.1:8000"
     )
     powershell -Command "(Get-Content 'configs\core\.env') | ForEach-Object {$_ -replace '\bAPP_URL=.*', 'APP_URL=!APP_URL!'} | Set-Content 'configs\core\.env'"
-)
-goto :EOF
-
-:: Function to check if the APP_URL is set and prompt the user if not
-:check_has_app_key
-:: Check if APP_KEY is already set
-set "APP_URL="
-for /f "tokens=2 delims==" %%i in ('findstr /r /c:"^APP_KEY=" configs\core\.env') do (
-    set "APP_URL=%%i"
-)
-:: If not set, prompt the user
-if "%APP_URL%"=="" (
-    echo Laravel uses an app key to protect your data with encryption
-    set /p APP_KEY="Your APP_KEY is not set, do you want to generate one? (y/n)"
-    if /i "!APP_KEY!"=="n" (
-        echo Please set BASIC_AUTH_TOKEN in configs\core\.env and run this script again
-        exit /b 1
-    ) else (
-        call :generate_app_key
-    )
 )
 goto :EOF
 
@@ -214,7 +173,6 @@ call :check_git_is_installed
 git submodule update --init
 
 call :check_has_app_url
-call :check_has_app_key
 call :check_has_basic_token
 call :check_has_daemon_password
 

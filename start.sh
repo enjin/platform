@@ -8,20 +8,6 @@ detect_user_os() {
   esac
 }
 
-generate_app_key() {
-  # Generate a new app key and set to .env file
-  RANDOM_KEY=base64:$(openssl rand -base64 32)
-  LARAVEL_KEY=$(printf '%s\n' "$RANDOM_KEY" | sed -e 's/[\/&]/\\&/g')
-
-  if [ "$PLATFORM_OS" = "macOS" ]; then
-    sed -i '' -e "s/^APP_KEY=/APP_KEY=$LARAVEL_KEY/g" configs/core/.env
-  else
-    sed -i "s/^APP_KEY=/APP_KEY=$LARAVEL_KEY/g" configs/core/.env
-  fi
-
-  echo "Done, your key is: $LARAVEL_KEY"
-}
-
 check_has_app_url() {
     # Check if user already has APP_URL set
     APP_URL=$(awk '$1 ~ /^APP_URL/' configs/core/.env | cut -d "=" -f 2)
@@ -42,23 +28,6 @@ check_has_app_url() {
           sed -i "s/^APP_URL=/APP_URL=\"$APP_URL\"/g" configs/core/.env
         fi
     fi
-}
-
-check_has_app_key() {
-  # Check if user already has APP_KEY set
-  APP_KEY=$(awk '$1 ~ /^APP_KEY/' configs/core/.env | cut -d "=" -f 2)
-  if [ -z "$APP_KEY" ]; then
-      echo "Laravel uses an app key to protect your data with encryption"
-      echo "Your APP_KEY is not set, do you want to generate one? (y/n)"
-      read generate_app_key
-
-      if [ "$generate_app_key" = "${generate_app_key#[Yy]}" ] ;then
-          echo "Please set APP_KEY in configs/core/.env and run this script again"
-          exit 1
-      else
-          generate_app_key
-      fi
-  fi
 }
 
 generate_basic_token() {
@@ -176,18 +145,9 @@ check_git_is_installed() {
   fi
 }
 
-# This might be removed if Polkadart removes the lfs dependency
-check_lfs_is_installed() {
-  if ! [ "$(git lfs --version)" ]; then
-      echo "Please install git lfs and run this script again"
-      exit 1
-  fi
-}
-
 echo "Welcome to Enjin Platform, this script will help you start it up"
 detect_user_os
 check_git_is_installed
-check_lfs_is_installed
 check_openssl_is_installed
 check_docker_is_installed
 check_compose_is_installed
@@ -196,7 +156,6 @@ check_docker_is_running
 git submodule update --init
 
 check_has_app_url
-check_has_app_key
 check_has_basic_token
 check_has_daemon_password
 
