@@ -1,6 +1,6 @@
 # Enjin Platform
 
-Enjin Platform is the most powerful and advanced open-source framework for building NFT platforms. This repo aims in giving an out-of-box quick start solution to run an application with platform and the Efinity Wallet Daemon. This template as it is should be **used only for testing purposes**, it is not recommended to run this way in production environments.
+Enjin Platform is the most powerful and advanced open-source framework for building NFT platforms. This repo aims in giving an out-of-box quick start solution to run an application with platform and the Efinity Wallet Daemon.
 
 [![License: LGPL 3.0](https://img.shields.io/badge/license-LGPL_3.0-purple)](https://opensource.org/license/lgpl-3-0/)
 
