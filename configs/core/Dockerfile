@@ -48,18 +48,16 @@ RUN cd /app/laravel-application/vendor/gmajor/sr25519-bindings/go && go build -b
 
 FROM create-application as http-setup
 
+# Set apache to listen on port 8000.
+RUN sed -i "s/Listen 80/Listen 8000/" /etc/apache2/ports.conf
+
 # Set ServerName to be localhost.
 RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf
 
 # Copy application to /var/www/html.
 COPY --from=composer-update /app/laravel-application /var/www/html
 
-# Copy envs.
-COPY configs/core/.env /var/www/html/.env
-RUN dos2unix /var/www/html/.env
-
 # Set permissions and ownership.
-RUN chmod 777 -R /var/www/html/storage/
 RUN chown -R www-data:www-data /var/www/
 
 # Enable mod rewrite.
