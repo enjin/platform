@@ -1,5 +1,5 @@
 {
   "node": "wss://rpc.matrix.blockchain.enjin.io:443",
-  "api": "http://app:8000/graphql",
+  "api": "http://app:80/graphql",
   "master_key": "/opt/app/storage"
 }
