@@ -110,10 +110,13 @@ services:
   daemon:
     image: enjin/daemon:latest
     build:
-      context: .
-      dockerfile: configs/daemon/Dockerfile
+      context: ./wallet-daemon
+      dockerfile: Dockerfile
     restart: unless-stopped
+    env_file:
+      - ./configs/daemon/.env
     volumes:
+      - ./configs/daemon/config.json:/opt/app/config.json
       - ./configs/daemon/store:/opt/app/storage
     extra_hosts:
       - "host.docker.internal:host-gateway"
