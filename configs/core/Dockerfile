@@ -85,4 +85,5 @@ WORKDIR /var/www/html
 COPY configs/core/start.sh /usr/local/bin/start
 RUN dos2unix /usr/local/bin/start
 
+USER www-data
 CMD ["/usr/local/bin/start"]
