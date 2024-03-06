@@ -28,8 +28,6 @@ services:
 
   decoder:
     image: enjin/decoder:latest
-    build:
-      context: ./platform-decoder
     restart: unless-stopped
     ports:
       - "${DECODER_EXTERNAL_PORT}:8090"
