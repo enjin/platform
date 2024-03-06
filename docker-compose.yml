@@ -27,9 +27,7 @@ services:
       - "${REDIS_EXTERNAL_PORT}:6379"
 
   decoder:
-    image: enjin/decoder:latest
-    build:
-      context: ./platform-decoder
+    image: enjin/platform-decoder:latest
     restart: unless-stopped
     ports:
       - "${DECODER_EXTERNAL_PORT}:8090"
