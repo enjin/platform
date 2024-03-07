@@ -72,7 +72,7 @@ if "%APP_KEY%"=="" (
     echo No application key set. A new key will be generated automatically.
 
     for /f "delims=" %%i in ('powershell -Command "$RandomBytes = New-Object byte[] 32; [Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($RandomBytes); $Base64String = [Convert]::ToBase64String($RandomBytes); Write-Output $Base64String"') do (
-        set APP_KEY=%%i
+        set "APP_KEY=%%i"
     )
 
     powershell -Command "(Get-Content 'configs\core\.env') | ForEach-Object {$_ -replace '\bAPP_KEY=.*', 'APP_KEY=base64:!APP_KEY!'} | Set-Content 'configs\core\.env'"
