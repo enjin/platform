@@ -27,6 +27,7 @@ services:
       - "${REDIS_EXTERNAL_PORT}:6379"
 
   decoder:
+    platform: linux/amd64
     image: enjin/platform-decoder:latest
     restart: unless-stopped
     ports:
