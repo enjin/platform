@@ -45,7 +45,6 @@ RUN cd laravel-application && \
 RUN cd /app/laravel-application/vendor/gmajor/sr25519-bindings/go && go build -buildmode=c-shared -o sr25519.so . && mv sr25519.so ../src/Crypto/sr25519.so
 
 # Stage: http setup
-
 FROM create-application as http-setup
 
 # Set ServerName to be localhost.
@@ -60,7 +59,7 @@ RUN dos2unix /var/www/html/.env
 
 # Set permissions and ownership.
 RUN chmod 777 -R /var/www/html/storage/
-RUN chown -R www-data:www-data /var/www/
+RUN chown -R www-data:www-data /var/www/ /var/log/supervisor
 
 # Enable mod rewrite.
 RUN update-rc.d supervisor defaults
@@ -71,7 +70,7 @@ COPY configs/core/apache/000-default.conf /etc/apache2/sites-available/000-defau
 
 # Copy php configs.
 COPY configs/core/php /usr/local/etc/php/conf.d
-COPY configs/core/supervisor /etc/supervisor/conf.d
+COPY configs/core/supervisor /etc/supervisor
 
 # Stage: platform-core
 FROM http-setup as enjin-platform
