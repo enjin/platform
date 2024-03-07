@@ -61,6 +61,20 @@ check_has_basic_token() {
   fi
 }
 
+check_and_generate_app_key() {
+  APP_KEY=$(awk '$1 ~ /^APP_KEY/' configs/core/.env | cut -d "=" -f 2)
+  if [ -z "$APP_KEY" ]; then
+    echo "No application key set. A new key will be generated automatically."
+
+    if [ "$PLATFORM_OS" = "macOS" ]; then
+      APP_KEY=$(dd if=/dev/urandom bs=32 count=1 status=none | base64)
+      sed -i '' -e "s/^APP_KEY=/APP_KEY=base64:$APP_KEY/g" configs/daemon/.env
+    else
+      sed -i "s/^APP_KEY=/APP_KEY=base64:$APP_KEY/g" configs/daemon/.env
+    fi
+  fi
+}
+
 generate_daemon_password() {
   # Generate a new key pass for the daemon and set to .env file
   WALLET_PASSWORD=$(openssl rand -hex 32)
@@ -158,6 +172,7 @@ git submodule update --init
 check_has_app_url
 check_has_basic_token
 check_has_daemon_password
+check_and_generate_app_key
 
 docker compose build daemon
 get_daemon_address
