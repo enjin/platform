@@ -128,7 +128,7 @@ for /f "tokens=2 delims==" %%i in ('findstr /r /c:"DAEMON_ACCOUNT=" configs\core
 if "%DAEMON_ACCOUNT%"=="" (
     echo Let's get your wallet daemon address, please wait...
     (docker compose up -d daemon)
-    for /f "delims=" %%a in ('docker compose logs daemon 2^>^&1 ^| findstr /r /c:"Efinity:"') do (
+    for /f "delims=" %%a in ('docker compose logs daemon 2^>^&1 ^| findstr /r /c:"Matrix:"') do (
         for %%w in (%%a) do set "WALLET_ADDRESS=%%w" 
     )
     echo Your wallet daemon address is: !WALLET_ADDRESS!
