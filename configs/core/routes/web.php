@@ -12,8 +12,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::get('/proof/{code}', fn() => redirect()->away('https://deeplink.wallet.enjin.io/scan/' . base64_encode(request()->fullUrl())));

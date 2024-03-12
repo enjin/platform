@@ -1,26 +1,22 @@
 # Stage: setup-web-server
 FROM php:apache-buster as setup-web-server
 
-# Install dependencies.
+# Install dependencies
 RUN apt-get update -y && \
     apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev python2 && \
     apt-get install -y libpq-dev libgmp-dev libsodium-dev libmemcached-dev zlib1g-dev wait-for-it libffi-dev golang-go && \
     apt-get install -y inotify-tools libcurl4-openssl-dev libpq-dev libssl-dev supervisor dos2unix
 
-# Install imagick
+# Install imagick and redis
 RUN apt-get install -y libmagickwand-dev --no-install-recommends && \
-    pecl install imagick
+    pecl install imagick redis
 
 # Install node and npm
-RUN curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
-RUN bash /tmp/nodesource_setup.sh
-RUN apt-get install -y nodejs
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - &&\
+    apt-get install -y nodejs
 
-COPY scripts/ /usr/scripts/
-
+# Install and enable additional php modules
 RUN docker-php-ext-install ffi pdo pdo_mysql gmp bcmath sodium mysqli sockets pcntl gd
-
-RUN /usr/scripts/install-php-redis.sh
 RUN docker-php-ext-enable redis imagick
 
 # Stage: create-application
@@ -45,7 +41,6 @@ RUN cd laravel-application && \
 RUN cd /app/laravel-application/vendor/gmajor/sr25519-bindings/go && go build -buildmode=c-shared -o sr25519.so . && mv sr25519.so ../src/Crypto/sr25519.so
 
 # Stage: http setup
-
 FROM create-application as http-setup
 
 # Set ServerName to be localhost.
@@ -60,7 +55,7 @@ RUN dos2unix /var/www/html/.env
 
 # Set permissions and ownership.
 RUN chmod 777 -R /var/www/html/storage/
-RUN chown -R www-data:www-data /var/www/
+RUN chown -R www-data:www-data /var/www/ /var/log/supervisor
 
 # Enable mod rewrite.
 RUN update-rc.d supervisor defaults
@@ -71,7 +66,7 @@ COPY configs/core/apache/000-default.conf /etc/apache2/sites-available/000-defau
 
 # Copy php configs.
 COPY configs/core/php /usr/local/etc/php/conf.d
-COPY configs/core/supervisor /etc/supervisor/conf.d
+COPY configs/core/supervisor /etc/supervisor
 
 # Stage: platform-core
 FROM http-setup as enjin-platform

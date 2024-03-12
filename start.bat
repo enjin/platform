@@ -60,6 +60,25 @@ if "%AUTH_TOKEN%"=="" (
 )
 goto :EOF
 
+:: Function to check if the $APP_KEY is set and generate a new one if not
+:check_and_generate_app_key
+:: Check if $APP_KEY is already set
+set "APP_KEY="
+for /f "tokens=2 delims==" %%i in ('findstr /r /c:"APP_KEY=" configs\core\.env') do (
+    set "APP_KEY=%%i"
+)
+:: If not set, generate a new key automatically
+if "%APP_KEY%"=="" (
+    echo No application key set. A new key will be generated automatically.
+
+    for /f "delims=" %%i in ('powershell -Command "$RandomBytes = New-Object byte[] 32; [Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($RandomBytes); $Base64String = [Convert]::ToBase64String($RandomBytes); Write-Output $Base64String"') do (
+        set "APP_KEY=%%i"
+    )
+
+    powershell -Command "(Get-Content 'configs\core\.env') | ForEach-Object {$_ -replace '\bAPP_KEY=.*', 'APP_KEY=base64:!APP_KEY!'} | Set-Content 'configs\core\.env'"
+)
+goto :EOF
+
 :: Function to generate a daemon password and set it in the .env file
 :generate_daemon_password
 :: Generate a new daemon password
@@ -175,6 +194,7 @@ git submodule update --init
 call :check_has_app_url
 call :check_has_basic_token
 call :check_has_daemon_password
+call :check_and_generate_app_key
 
 :: Build the daemon container
 docker compose build daemon
