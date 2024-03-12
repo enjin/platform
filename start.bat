@@ -187,17 +187,12 @@ goto :EOF
 :MAIN
 echo Welcome to Enjin Platform, this script will help you start it up
 call :check_git_is_installed
-
-:: Initialize Git submodules
-git submodule update --init
-
 call :check_has_app_url
 call :check_has_basic_token
 call :check_has_daemon_password
 call :check_and_generate_app_key
 
 :: Build the daemon container
-docker compose build daemon
 call :get_daemon_address
 
 :: Prompt the user to start platform services

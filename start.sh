@@ -111,7 +111,7 @@ get_daemon_address() {
     if [ -z "$DAEMON_ACCOUNT" ]; then
         echo "Let's get your wallet daemon address, please wait..."
         (docker compose up -d daemon)
-        WALLET_ADDRESS=$(docker compose logs daemon 2>&1 | grep "Efinity:" | awk '{print $NF}' | tail -n 1)
+        WALLET_ADDRESS=$(docker compose logs daemon 2>&1 | grep "Enjin:" | awk '{print $NF}' | tail -n 1)
         echo "Your wallet daemon address is: $WALLET_ADDRESS"
 
         if [ "$PLATFORM_OS" = "macOS" ]; then
@@ -167,14 +167,11 @@ check_docker_is_installed
 check_compose_is_installed
 check_docker_is_running
 
-git submodule update --init
-
 check_has_app_url
 check_has_basic_token
 check_has_daemon_password
 check_and_generate_app_key
 
-docker compose build daemon
 get_daemon_address
 
 echo "Do you want to start all platform services? (y/n)"
