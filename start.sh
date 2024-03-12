@@ -185,7 +185,8 @@ read start_services
 if [ "$start_services" != "${start_services#[Yy]}" ] ;then
     docker compose build
     docker compose up -d
-    echo "Your Enjin Platform is now running, please visit: http://127.0.0.1:8000"
+    echo "Your Enjin Platform is now installing the UI and other dependencies..."
+    echo "It should be available in a few minutes at: http://127.0.0.1:8000 "
 else
     docker compose down
     echo "Please run this script again when you are ready"
