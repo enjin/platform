@@ -64,7 +64,7 @@ goto :EOF
 :check_and_generate_app_key
 :: Check if $APP_KEY is already set
 set "APP_KEY="
-for /f "tokens=2 delims==" %%i in ('findstr /r /c:"APP_KEY=" configs\core\.env') do (
+for /f "tokens=2 delims==" %%i in ('findstr /r /c:"^APP_KEY=" configs\core\.env') do (
     set "APP_KEY=%%i"
 )
 :: If not set, generate a new key automatically
