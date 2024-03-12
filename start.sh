@@ -65,12 +65,12 @@ check_and_generate_app_key() {
   APP_KEY=$(awk '$1 ~ /^APP_KEY/' configs/core/.env | cut -d "=" -f 2)
   if [ -z "$APP_KEY" ]; then
     echo "No application key set. A new key will be generated automatically."
+    APP_KEY=$(dd if=/dev/urandom bs=32 count=1 status=none | base64)
 
     if [ "$PLATFORM_OS" = "macOS" ]; then
-      APP_KEY=$(dd if=/dev/urandom bs=32 count=1 status=none | base64)
-      sed -i '' -e "s/^APP_KEY=/APP_KEY=base64:$APP_KEY/g" configs/daemon/.env
+      sed -i '' -e "s#^APP_KEY=#APP_KEY=base64:$APP_KEY#g" configs/core/.env
     else
-      sed -i "s/^APP_KEY=/APP_KEY=base64:$APP_KEY/g" configs/daemon/.env
+      sed -i "s#^APP_KEY=#APP_KEY=base64:$APP_KEY#g" configs/core/.env
     fi
   fi
 }
