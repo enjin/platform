@@ -110,9 +110,14 @@ get_daemon_address() {
     DAEMON_ACCOUNT=$(awk '$1 ~ /^DAEMON_ACCOUNT/' configs/core/.env | cut -d "=" -f 2)
     if [ -z "$DAEMON_ACCOUNT" ]; then
         echo "Let's get your wallet daemon address, please wait..."
+
         (docker compose up -d daemon)
-        WALLET_ADDRESS=$(docker compose logs daemon 2>&1 | grep "Enjin:" | awk '{print $NF}' | tail -n 1)
-        echo "Your wallet daemon address is: $WALLET_ADDRESS"
+        sleep 3
+
+        WALLET_ADDRESS=$(docker compose logs daemon 2>&1 | grep -A2 "Wallet daemon address" | awk '{print $NF}' | tail -n 2)
+        echo "Your wallet daemon address is:"
+        echo "$WALLET_ADDRESS"
+        WALLET_ADDRESS=$(echo "$WALLET_ADDRESS" | head -n 1)
 
         if [ "$PLATFORM_OS" = "macOS" ]; then
           sed -i '' -e "s/^DAEMON_ACCOUNT=/DAEMON_ACCOUNT=$WALLET_ADDRESS/g" configs/core/.env
