@@ -1,3 +1,0 @@
-[submodule "wallet-daemon"]
-	path = wallet-daemon
-	url = https://github.com/enjin/wallet-daemon.git
