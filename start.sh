@@ -110,9 +110,14 @@ get_daemon_address() {
     DAEMON_ACCOUNT=$(awk '$1 ~ /^DAEMON_ACCOUNT/' configs/core/.env | cut -d "=" -f 2)
     if [ -z "$DAEMON_ACCOUNT" ]; then
         echo "Let's get your wallet daemon address, please wait..."
+
         (docker compose up -d daemon)
-        WALLET_ADDRESS=$(docker compose logs daemon 2>&1 | grep "Efinity:" | awk '{print $NF}' | tail -n 1)
-        echo "Your wallet daemon address is: $WALLET_ADDRESS"
+        sleep 3
+
+        WALLET_ADDRESS=$(docker compose logs daemon 2>&1 | grep -A2 "Wallet daemon address" | awk '{print $NF}' | tail -n 2)
+        echo "Your wallet daemon address is:"
+        echo "$WALLET_ADDRESS"
+        WALLET_ADDRESS=$(echo "$WALLET_ADDRESS" | head -n 1)
 
         if [ "$PLATFORM_OS" = "macOS" ]; then
           sed -i '' -e "s/^DAEMON_ACCOUNT=/DAEMON_ACCOUNT=$WALLET_ADDRESS/g" configs/core/.env
@@ -160,30 +165,27 @@ check_git_is_installed() {
 }
 
 echo "Welcome to Enjin Platform, this script will help you start it up"
+
 detect_user_os
 check_git_is_installed
 check_openssl_is_installed
 check_docker_is_installed
 check_compose_is_installed
 check_docker_is_running
-
-git submodule update --init
-
 check_has_app_url
 check_has_basic_token
 check_has_daemon_password
 check_and_generate_app_key
-
-docker compose build daemon
 get_daemon_address
 
 echo "Do you want to start all platform services? (y/n)"
 read start_services
 
 if [ "$start_services" != "${start_services#[Yy]}" ] ;then
-    docker compose build
+    docker compose build app --no-cache
     docker compose up -d
-    echo "Your Enjin Platform is now running, please visit: http://127.0.0.1:8000"
+    echo "Your Enjin Platform is now installing the UI and other dependencies..."
+    echo "It should be available in a few minutes at: http://127.0.0.1:8000 "
 else
     docker compose down
     echo "Please run this script again when you are ready"

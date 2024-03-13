@@ -64,7 +64,7 @@ goto :EOF
 :check_and_generate_app_key
 :: Check if $APP_KEY is already set
 set "APP_KEY="
-for /f "tokens=2 delims==" %%i in ('findstr /r /c:"APP_KEY=" configs\core\.env') do (
+for /f "tokens=2 delims==" %%i in ('findstr /r /c:"^APP_KEY=" configs\core\.env') do (
     set "APP_KEY=%%i"
 )
 :: If not set, generate a new key automatically
@@ -128,7 +128,7 @@ for /f "tokens=2 delims==" %%i in ('findstr /r /c:"DAEMON_ACCOUNT=" configs\core
 if "%DAEMON_ACCOUNT%"=="" (
     echo Let's get your wallet daemon address, please wait...
     (docker compose up -d daemon)
-    for /f "delims=" %%a in ('docker compose logs daemon 2^>^&1 ^| findstr /r /c:"Efinity:"') do (
+    for /f "delims=" %%a in ('docker compose logs daemon 2^>^&1 ^| findstr /r /c:"Matrix:"') do (
         for %%w in (%%a) do set "WALLET_ADDRESS=%%w" 
     )
     echo Your wallet daemon address is: !WALLET_ADDRESS!
@@ -187,25 +187,19 @@ goto :EOF
 :MAIN
 echo Welcome to Enjin Platform, this script will help you start it up
 call :check_git_is_installed
-
-:: Initialize Git submodules
-git submodule update --init
-
 call :check_has_app_url
 call :check_has_basic_token
 call :check_has_daemon_password
 call :check_and_generate_app_key
-
-:: Build the daemon container
-docker compose build daemon
 call :get_daemon_address
 
 :: Prompt the user to start platform services
 set /p start_services=Do you want to start all platform services? (y/n)
 if /i "%start_services%"=="y" (
-    docker compose build
+    docker compose build app --no-cache
     docker compose up -d
-    echo Your Enjin Platform is now running, please visit: http://127.0.0.1:8000
+    echo Your Enjin Platform is now installing the UI and other dependencies...
+    echo It should be available in a few minutes at: http://127.0.0.1:8000
 ) else (
     docker compose down
     echo Please run this script again when you are ready

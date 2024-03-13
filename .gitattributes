@@ -1,7 +1,8 @@
-# Autodetect text files
-* text=auto
+# Ensure text files uses LF.
+* text=lf
 
-# Ensure shell script uses LF.
+# Ensure shell script uses LF and bat script CRLF.
 Dockerfile  eol=lf
 *.sh        eol=lf
+*.bat       eol=crlf
 .env        eol=lf

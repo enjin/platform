@@ -27,7 +27,7 @@ services:
       - "${REDIS_EXTERNAL_PORT}:6379"
 
   decoder:
-    platform: linux/x86_64
+    platform: linux/amd64
     image: enjin/platform-decoder:latest
     restart: unless-stopped
     ports:
@@ -107,10 +107,8 @@ services:
       - "host.docker.internal:host-gateway"
 
   daemon:
-    image: enjin/daemon:latest
-    build:
-      context: ./wallet-daemon
-      dockerfile: Dockerfile
+    platform: linux/amd64
+    image: enjin/wallet-daemon:latest
     restart: unless-stopped
     env_file:
       - ./configs/daemon/.env

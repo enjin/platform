@@ -1,5 +1,5 @@
 # Stage: setup-web-server
-FROM php:apache-buster as setup-web-server
+FROM php:apache-buster AS setup-web-server
 
 # Install dependencies
 RUN apt-get update -y && \
@@ -20,7 +20,7 @@ RUN docker-php-ext-install ffi pdo pdo_mysql gmp bcmath sodium mysqli sockets pc
 RUN docker-php-ext-enable redis imagick
 
 # Stage: create-application
-FROM setup-web-server as create-application
+FROM setup-web-server AS create-application
 
 WORKDIR /app/
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
@@ -32,7 +32,7 @@ COPY configs/core/config/ /app/laravel-application/config/
 COPY configs/core/routes/ /app/laravel-application/routes/
 
 # Stage: composer-update
-FROM create-application as composer-update
+FROM create-application AS composer-update
 
 RUN cd laravel-application && \
     composer update --prefer-dist --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
@@ -41,7 +41,7 @@ RUN cd laravel-application && \
 RUN cd /app/laravel-application/vendor/gmajor/sr25519-bindings/go && go build -buildmode=c-shared -o sr25519.so . && mv sr25519.so ../src/Crypto/sr25519.so
 
 # Stage: http setup
-FROM create-application as http-setup
+FROM create-application AS http-setup
 
 # Set ServerName to be localhost.
 RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf
@@ -69,7 +69,7 @@ COPY configs/core/php /usr/local/etc/php/conf.d
 COPY configs/core/supervisor /etc/supervisor
 
 # Stage: platform-core
-FROM http-setup as enjin-platform
+FROM http-setup AS enjin-platform
 
 LABEL org.opencontainers.image.source=https://github.com/enjin/platform
 LABEL org.opencontainers.image.description="Enjin Platform - The most powerful and advanced open-source framework for building NFT platforms."
@@ -77,8 +77,8 @@ LABEL org.opencontainers.image.licenses=LGPL-3.0-only
 
 WORKDIR /var/www/html
 
-COPY configs/core/start.sh /usr/local/bin/start
-RUN dos2unix /usr/local/bin/start
+COPY configs/core/start.sh /usr/local/bin/start.sh
+RUN dos2unix /usr/local/bin/start.sh
 
 USER www-data
-CMD ["/usr/local/bin/start"]
+CMD ["/usr/local/bin/start.sh"]
