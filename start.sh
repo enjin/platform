@@ -165,25 +165,24 @@ check_git_is_installed() {
 }
 
 echo "Welcome to Enjin Platform, this script will help you start it up"
+
 detect_user_os
 check_git_is_installed
 check_openssl_is_installed
 check_docker_is_installed
 check_compose_is_installed
 check_docker_is_running
-
 check_has_app_url
 check_has_basic_token
 check_has_daemon_password
 check_and_generate_app_key
-
 get_daemon_address
 
 echo "Do you want to start all platform services? (y/n)"
 read start_services
 
 if [ "$start_services" != "${start_services#[Yy]}" ] ;then
-    docker compose build
+    docker compose build app --no-cache
     docker compose up -d
     echo "Your Enjin Platform is now installing the UI and other dependencies..."
     echo "It should be available in a few minutes at: http://127.0.0.1:8000 "
