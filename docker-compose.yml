@@ -9,6 +9,8 @@ services:
       - MYSQL_ROOT_PASSWORD
     volumes:
       - platform-mysql:/var/lib/mysql
+    networks:
+      - platform
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}"]
       retries: 3
@@ -19,6 +21,8 @@ services:
   redis:
     image: redis:alpine
     restart: unless-stopped
+    networks:
+      - platform
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       retries: 3
@@ -30,6 +34,8 @@ services:
     platform: linux/amd64
     image: enjin/platform-decoder:latest
     restart: unless-stopped
+    networks:
+      - platform
     ports:
       - "${DECODER_EXTERNAL_PORT}:8090"
 
@@ -37,86 +43,24 @@ services:
     image: enjin/platform:latest
     build:
       context: .
-      dockerfile: configs/core/Dockerfile
     restart: unless-stopped
     environment:
       CONTAINER_ROLE: app
     volumes:
-      - ./logs:/var/www/html/storage/logs
-    depends_on:
-      - database
-      - redis
+      - '.:/var/www/html'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    networks:
+      - platform
     ports:
       - "${APP_EXTERNAL_PORT}:80"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-  websocket:
-    image: enjin/platform:latest
-    build:
-      context: .
-      dockerfile: configs/core/Dockerfile
-    restart: unless-stopped
-    environment:
-      CONTAINER_ROLE: websocket
-    volumes:
-      - ./logs:/var/www/html/storage/logs
     depends_on:
       - database
       - redis
-    ports:
-      - "${SOCKET_EXTERNAL_PORT}:6001"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
-  ingest:
-    image: enjin/platform:latest
-    build:
-      context: .
-      dockerfile: configs/core/Dockerfile
-    restart: unless-stopped
-    environment:
-      CONTAINER_ROLE: ingest
-    volumes:
-      - ./logs:/var/www/html/storage/logs
-    depends_on:
-      - database
-      - redis
-      - app
-      - websocket
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-  beam:
-    image: enjin/platform:latest
-    build:
-      context: .
-      dockerfile: configs/core/Dockerfile
-    restart: unless-stopped
-    environment:
-      CONTAINER_ROLE: beam
-    volumes:
-      - ./logs:/var/www/html/storage/logs
-    depends_on:
-      - database
-      - redis
-      - app
-      - websocket
-      - ingest
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-  daemon:
-    platform: linux/amd64
-    image: enjin/wallet-daemon:latest
-    restart: unless-stopped
-    env_file:
-      - ./configs/daemon/.env
-    volumes:
-      - ./configs/daemon/config.json:/opt/app/config.json
-      - ./configs/daemon/store:/opt/app/storage
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+networks:
+  platform:
+    driver: bridge
 
 volumes:
   platform-mysql:
