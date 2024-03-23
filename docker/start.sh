@@ -15,6 +15,7 @@ role=${CONTAINER_ROLE:-app}
 
 if [ ! -z "$WWWUSER" ]; then
     usermod -u $WWWUSER www-data
+    groupmod -g $WWWGROUP www-data
 fi
 
 if [ ! -d /.composer ]; then

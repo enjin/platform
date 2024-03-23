@@ -1,7 +1,6 @@
 # State: setup-web-server
 FROM php:8.3-apache AS setup-container-dependencies
 LABEL maintainer="Enjin"
-ARG WWWGROUP
 
 WORKDIR /var/www/html
 
@@ -41,9 +40,6 @@ RUN cd vendor/gmajor/sr25519-bindings/go && go build -buildmode=c-shared -o sr25
 # Stage: http setup
 FROM setup-application-dependencies AS setup-http-server
 
-RUN groupadd --force -g $WWWGROUP www-data
-#RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP www-data
-
 RUN echo 'ServerName localhost' >> /etc/apache2/apache2.conf
 RUN update-rc.d supervisor defaults
 RUN a2enmod rewrite
@@ -59,9 +55,6 @@ LABEL org.opencontainers.image.source=https://github.com/enjin/platform
 LABEL org.opencontainers.image.description="Enjin Platform - The most powerful and advanced open-source framework for building NFT platforms."
 LABEL org.opencontainers.image.licenses=LGPL-3.0-only
 
-ARG USER_ID
-ARG GROUP_ID
-
 WORKDIR /var/www/html
 
 COPY docker/start.sh /usr/local/bin/start.sh
@@ -69,20 +62,6 @@ RUN dos2unix /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
 #RUN dos2unix /var/www/html/.env
-
-#RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
-#    userdel -f www-data &&\
-#    if getent group www-data ; then groupdel www-data; fi &&\
-#    groupadd -g ${GROUP_ID} www-data &&\
-#    useradd -l -u ${USER_ID} -g www-data www-data &&\
-#    install -d -m 0755 -o www-data -g www-data /home/www-data &&\
-#    chown --changes --silent --no-dereference --recursive \
-#          --from=33:33 ${USER_ID}:${GROUP_ID} \
-#        /home/www-data \
-#        /.composer \
-#        /var/run/apache2 \
-#;fi
-
 
 EXPOSE 8000
 
