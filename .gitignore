@@ -7,6 +7,8 @@ logs/**.log
 /public/build
 /public/hot
 /public/storage
+/public/vendor
+/public/images/enjin-wallet-long.svg
 /storage/*.key
 /vendor
 .env

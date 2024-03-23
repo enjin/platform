@@ -43,13 +43,16 @@ services:
     image: enjin/platform:latest
     build:
       context: .
+      args:
+        WWWGROUP: '${WWWGROUP}'
     restart: unless-stopped
     environment:
+      WWWUSER: '${WWWUSER}'
       CONTAINER_ROLE: app
     volumes:
       - '.:/var/www/html'
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
+#    extra_hosts:
+#      - 'host.docker.internal:host-gateway'
     networks:
       - platform
     ports:
