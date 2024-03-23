@@ -65,6 +65,4 @@ RUN chmod +x /usr/local/bin/start.sh
 
 EXPOSE 8000
 
-#USER www-data
-
 CMD ["/usr/local/bin/start.sh"]

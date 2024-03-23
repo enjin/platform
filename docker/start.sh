@@ -24,13 +24,7 @@ fi
 
 chmod -R ugo+rw /.composer
 
-if [ $# -gt 0 ]; then
-    if [ "$SUPERVISOR_PHP_USER" = "root" ]; then
-        exec "$@"
-    else
-        exec gosu $WWWUSER "$@"
-    fi
-fi
+
 
 #else
 #    exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
@@ -45,9 +39,12 @@ fi
 #    echo "Running ingest..."
 #    php artisan migrate && php artisan platform:sync && php artisan platform:ingest
 #elif [ "$role" = "app" ]; then
-    php artisan log-viewer:publish && php artisan platform-ui:install --route="/" --tenant="no" --skip && php artisan route:cache && php artisan view:cache
+    gosu www-data:www-data php artisan log-viewer:publish
+    gosu www-data:www-data php artisan platform-ui:install --route="/" --tenant="no" --skip
+    gosu www-data:www-data php artisan route:cache
+    gosu www-data:www-data php artisan view:cache
     echo "Running apache..."
-    exec apache2-foreground
+    exec gosu www-data:www-data bash -c apache2-foreground
 #elif [ "$role" = "websocket" ]; then
 #    echo "Running queue and websocket..."
 #    supervisord && supervisorctl start horizon
