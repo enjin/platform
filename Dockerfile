@@ -23,7 +23,7 @@ RUN docker-php-ext-install ffi pdo pdo_mysql gmp bcmath sodium mysqli sockets pc
 RUN docker-php-ext-enable redis imagick
 
 # Clean up not needed dependencies
-run apt-get -y autoremove && \
+RUN apt-get -y autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -32,10 +32,6 @@ FROM setup-container-dependencies AS setup-application-dependencies
 WORKDIR /var/www/html
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-COPY composer.json composer.json
-
-RUN composer update --prefer-dist --no-dev --no-interaction --ignore-platform-reqs --no-scripts
-RUN cd vendor/gmajor/sr25519-bindings/go && go build -buildmode=c-shared -o sr25519.so . && mv sr25519.so ../src/Crypto/sr25519.so
 
 # Stage: http setup
 FROM setup-application-dependencies AS setup-http-server

@@ -1,5 +1,6 @@
 {
     "name": "enjin/platform",
+    "version": "1.0.0",
     "type": "project",
     "description": "Enjin Platform is the most powerful and advanced open-source framework for building NFT platforms.",
     "keywords": [
