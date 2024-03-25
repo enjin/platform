@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-
 set -o allexport
-source .env set
-+o allexport
+source .env
+set +o allexport
 
 export WWWUSER=${WWWUSER:-$UID}
 export WWWGROUP=${WWWGROUP:-$(id -g)}
