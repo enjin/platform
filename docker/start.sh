@@ -58,21 +58,18 @@ if [ "$CONTAINER_ROLE" = "app" ]; then
 
 elif [ "$CONTAINER_ROLE" = "ingest" ]; then
     echo "Running platform ingest..."
-
     gosu www-data:www-data php artisan migrate
     gosu www-data:www-data php artisan platform:sync
     gosu www-data:www-data php artisan platform:ingest
 
 elif [ "$CONTAINER_ROLE" = "websocket" ]; then
     echo "Running queue and websocket..."
-
     supervisord -c /etc/supervisor/supervisord.conf
     supervisorctl start horizon
     gosu www-data:www-data php artisan websockets:serve
 
 elif [ "$CONTAINER_ROLE" = "beam" ]; then
     echo "Running beams..."
-
     gosu www-data:www-data php artisan platform:process-beam-claims
 
 else
