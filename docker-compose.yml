@@ -40,14 +40,12 @@ services:
       - "${DECODER_EXTERNAL_PORT}:8090"
 
   app:
-    image: enjin/platform:latest
+    image: enjin/platform:local
     build:
       context: .
     restart: unless-stopped
     environment:
       CONTAINER_ROLE: app
-      WWWUSER: '${WWWUSER}'
-      WWWGROUP: '${WWWGROUP}'
     volumes:
       - '.:/var/www/html'
     networks:
@@ -59,14 +57,10 @@ services:
       - redis
 
   ingest:
-    image: enjin/platform:latest
-    build:
-      context: .
+    image: enjin/platform:local
     restart: unless-stopped
     environment:
       CONTAINER_ROLE: ingest
-      WWWUSER: '${WWWUSER}'
-      WWWGROUP: '${WWWGROUP}'
     volumes:
       - '.:/var/www/html'
     networks:
@@ -74,16 +68,13 @@ services:
     depends_on:
       - database
       - redis
+      - app
 
   websocket:
-    image: enjin/platform:latest
-    build:
-      context: .
+    image: enjin/platform:local
     restart: unless-stopped
     environment:
       CONTAINER_ROLE: websocket
-      WWWUSER: '${WWWUSER}'
-      WWWGROUP: '${WWWGROUP}'
     volumes:
       - '.:/var/www/html'
     networks:
@@ -95,14 +86,10 @@ services:
       - redis
 
   beam:
-    image: enjin/platform:latest
-    build:
-      context: .
+    image: enjin/platform:local
     restart: unless-stopped
     environment:
       CONTAINER_ROLE: beam
-      WWWUSER: '${WWWUSER}'
-      WWWGROUP: '${WWWGROUP}'
     volumes:
       - '.:/var/www/html'
     networks:

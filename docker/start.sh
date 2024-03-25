@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-set -e
+set -o allexport
+source .env set
++o allexport
 
 export WWWUSER=${WWWUSER:-$UID}
 export WWWGROUP=${WWWGROUP:-$(id -g)}
@@ -7,6 +9,13 @@ export ROLE=${CONTAINER_ROLE:-app}
 export DB_HOST=${DOCKER_DB_HOST:-database}
 export REDIS_HOST=${DOCKER_REDIS_HOST:-redis}
 export DECODER_CONTAINER=${DECODER_CONTAINER:-"decoder:8090"}
+
+echo $WWWUSER
+echo $WWWGROUP
+echo $ROLE
+echo $DB_HOST
+echo $REDIS_HOST
+echo $DECODER_CONTAINER
 
 if [ ! -z "$WWWUSER" ]; then
     usermod -u $WWWUSER www-data
@@ -47,14 +56,17 @@ if [ "$ROLE" = "app" ]; then
     exec apache2-foreground
 elif [ "$ROLE" = "ingest" ]; then
     echo "Running platform ingest..."
-    php artisan migrate && php artisan platform:sync && php artisan platform:ingest
+    gosu www-data:www-data php artisan migrate
+    gosu www-data:www-data php artisan platform:sync
+    gosu www-data:www-data php artisan platform:ingest
 elif [ "$ROLE" = "websocket" ]; then
     echo "Running queue and websocket..."
-    supervisord && supervisorctl start horizon
-    php artisan websockets:serve
+    supervisord -c /etc/supervisor/supervisord.conf
+    supervisorctl start horizon
+    gosu www-data:www-data php artisan websockets:serve
 elif [ "$ROLE" = "beam" ]; then
     echo "Running beams..."
-    php artisan platform:process-beam-claims
+    gosu www-data:www-data php artisan platform:process-beam-claims
 else
     echo "Could not match the container role \"$ROLE\""
     exit 1
