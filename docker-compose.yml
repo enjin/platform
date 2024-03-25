@@ -69,9 +69,7 @@ services:
     networks:
       - platform
     depends_on:
-      - database
-      - redis
-#      - app
+      - app
 
   websocket:
     image: enjin/platform:local
@@ -85,8 +83,7 @@ services:
     ports:
       - "${SOCKET_EXTERNAL_PORT}:6001"
     depends_on:
-      - database
-      - redis
+      - app
 
   beam:
     image: enjin/platform:local
@@ -98,8 +95,7 @@ services:
     networks:
       - platform
     depends_on:
-      - database
-      - redis
+      - app
 
   daemon:
     platform: linux/amd64

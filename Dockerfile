@@ -59,6 +59,6 @@ RUN chmod +x /usr/local/bin/start.sh
 
 #RUN dos2unix /var/www/html/.env
 
-EXPOSE 8000
+EXPOSE 8000 6001
 
 CMD ["/usr/local/bin/start.sh"]

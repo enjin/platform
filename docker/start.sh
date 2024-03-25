@@ -1,17 +1,11 @@
 #!/usr/bin/env bash
+
 set -o allexport
 source .env set
 +o allexport
 
-echo $WWWUSER
-echo $WWWGROUP
-
 export WWWUSER=${WWWUSER:-$UID}
 export WWWGROUP=${WWWGROUP:-$(id -g)}
-
-echo $WWWUSER
-echo $WWWGROUP
-echo $CONTAINER_ROLE
 
 if [ ! -z "$WWWUSER" ]; then
     usermod -u $WWWUSER www-data
@@ -23,7 +17,16 @@ if [ ! -d /.composer ]; then
 fi
 
 chmod -R ugo+rw /.composer
-composer install --prefer-dist --no-dev --no-interaction --ignore-platform-reqs
+
+if [ ! "$CONTAINER_ROLE" = "app" ]; then
+    wait-for-it -t 300 app:80
+fi
+
+if [ ! -d vendor ]; then
+    composer install --prefer-dist --no-dev --no-interaction --ignore-platform-reqs
+fi
+
+
 chown -hR www-data:www-data composer.lock vendor/ storage/ public/
 
 if [ "$CONTAINER_ROLE" = "app" ]; then
@@ -34,10 +37,11 @@ if [ "$CONTAINER_ROLE" = "app" ]; then
 
     if [ ! -f vendor/gmajor/sr25519-bindings/src/Crypto/sr25519.so ]; then
         (cd vendor/gmajor/sr25519-bindings/go && GOFLAGS=-buildvcs=false go build -buildmode=c-shared -o sr25519.so . && mv sr25519.so ../src/Crypto/sr25519.so)
+        chown -hR www-data:www-data vendor/gmajor/sr25519-bindings
     fi
 
     npm install
-    chown -hR www-data:www-data package-lock.json node_modules/ vendor/gmajor/sr25519-bindings/
+    chown -hR www-data:www-data package-lock.json node_modules/
 
     if ! [ -d public/vendor/platform-ui/build ]; then
         # Platform-UI needs to check why we need to run this twice to make it work correctly.
