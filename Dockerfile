@@ -1,5 +1,5 @@
 # State: setup-web-server
-FROM php:8.3-apache AS setup-container-dependencies
+FROM php:8.2-apache AS setup-container-dependencies
 LABEL maintainer="Enjin"
 
 WORKDIR /var/www/html
