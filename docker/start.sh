@@ -1,19 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-
-echo $WWWUSER
-echo $WWWGROUP
-echo $PATH
-
-
+export ROLE=${CONTAINER_ROLE:-app}
 export DB_HOST=database
 export REDIS_HOST=redis
 export DECODER_CONTAINER=decoder:8090
-
-
-role=${CONTAINER_ROLE:-app}
-
 
 if [ ! -z "$WWWUSER" ]; then
     usermod -u $WWWUSER www-data
@@ -26,20 +17,26 @@ fi
 
 chmod -R ugo+rw /.composer
 
-ls -la
-
-echo "Who am i"
-whoami
 
 npm install
 composer update --prefer-dist --no-dev --no-interaction --ignore-platform-reqs
 (cd vendor/gmajor/sr25519-bindings/go && GOFLAGS=-buildvcs=false go build -buildmode=c-shared -o sr25519.so . && mv sr25519.so ../src/Crypto/sr25519.so)
+chown -hR www-data:www-data composer.lock package-lock.json vendor/ storage/ public/ node-modules/ vendor/gmajor/sr25519-bindings/src/Crypto/
 
 
-chown -hR www-data:www-data composer.lock
-chown -hR www-data:www-data vendor
-chown -hR www-data:www-data storage
-chown -hR www-data:www-data public
+if ! [ -f config/log-viewer.php ]; then
+    gosu www-data:www-data php artisan log-viewer:publish
+fi
+
+if ! [ -d public/vendor/platform-ui/build ]; then
+    gosu www-data:www-data php artisan platform-ui:install --route="/" --tenant="no" --skip
+fi
+
+gosu www-data:www-data php artisan optimize
+gosu www-data:www-data php artisan view:cache
+echo "Running apache..."
+exec apache2-foreground
+
 
 #else
 #    exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
@@ -54,12 +51,10 @@ chown -hR www-data:www-data public
 #    echo "Running ingest..."
 #    php artisan migrate && php artisan platform:sync && php artisan platform:ingest
 #elif [ "$role" = "app" ]; then
-    gosu www-data:www-data php artisan log-viewer:publish
-    gosu www-data:www-data php artisan platform-ui:install --route="/" --tenant="no" --skip
-    gosu www-data:www-data php artisan route:cache
-    gosu www-data:www-data php artisan view:cache
-    echo "Running apache..."
-    exec apache2-foreground
+
+
+
+
 #elif [ "$role" = "websocket" ]; then
 #    echo "Running queue and websocket..."
 #    supervisord && supervisorctl start horizon
