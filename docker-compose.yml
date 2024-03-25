@@ -58,6 +58,73 @@ services:
       - database
       - redis
 
+  ingest:
+    image: enjin/platform:latest
+    build:
+      context: .
+    restart: unless-stopped
+    environment:
+      CONTAINER_ROLE: ingest
+      WWWUSER: '${WWWUSER}'
+      WWWGROUP: '${WWWGROUP}'
+    volumes:
+      - '.:/var/www/html'
+    networks:
+      - platform
+    depends_on:
+      - database
+      - redis
+
+  websocket:
+    image: enjin/platform:latest
+    build:
+      context: .
+    restart: unless-stopped
+    environment:
+      CONTAINER_ROLE: websocket
+      WWWUSER: '${WWWUSER}'
+      WWWGROUP: '${WWWGROUP}'
+    volumes:
+      - '.:/var/www/html'
+    networks:
+      - platform
+    ports:
+      - "${SOCKET_EXTERNAL_PORT}:6001"
+    depends_on:
+      - database
+      - redis
+
+  beam:
+    image: enjin/platform:latest
+    build:
+      context: .
+    restart: unless-stopped
+    environment:
+      CONTAINER_ROLE: beam
+      WWWUSER: '${WWWUSER}'
+      WWWGROUP: '${WWWGROUP}'
+    volumes:
+      - '.:/var/www/html'
+    networks:
+      - platform
+    depends_on:
+      - database
+      - redis
+
+  daemon:
+    platform: linux/amd64
+    image: enjin/wallet-daemon:latest
+    restart: unless-stopped
+    env_file:
+      - ./daemon/.env
+    volumes:
+      - ./daemon/config.json:/opt/app/config.json
+      - ./daemon/store:/opt/app/storage
+    networks:
+      - platform
+    depends_on:
+      - app
+
 networks:
   platform:
     driver: bridge
