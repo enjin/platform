@@ -18,19 +18,18 @@ fi
 chmod -R ugo+rw /.composer
 
 if [ ! "$CONTAINER_ROLE" = "app" ]; then
-    wait-for-it -t 300 app:80
+    wait-for-it -t 900 app:80
 fi
 
 if [ ! -d vendor ]; then
     composer install --prefer-dist --no-dev --no-interaction --ignore-platform-reqs
+    chown -hR www-data:www-data composer.lock vendor/
 fi
 
-
-chown -hR www-data:www-data composer.lock vendor/ storage/ public/
+chown -hR www-data:www-data storage/ public/
 
 if [ "$CONTAINER_ROLE" = "app" ]; then
-
-    if ! [ -f config/log-viewer.php ]; then
+    if [ ! -f config/log-viewer.php ]; then
         gosu www-data:www-data php artisan log-viewer:publish
     fi
 
@@ -39,10 +38,12 @@ if [ "$CONTAINER_ROLE" = "app" ]; then
         chown -hR www-data:www-data vendor/gmajor/sr25519-bindings
     fi
 
-    npm install
-    chown -hR www-data:www-data package-lock.json node_modules/
+    if [ ! -d node_modules ]; then
+        npm install
+        chown -hR www-data:www-data package-lock.json node_modules/
+    fi
 
-    if ! [ -d public/vendor/platform-ui/build ]; then
+    if [ ! -d public/vendor/platform-ui/build ]; then
         # Platform-UI needs to check why we need to run this twice to make it work correctly.
         gosu www-data:www-data php artisan platform-ui:install --route="/" --tenant="no" --skip
         (cd vendor/enjin/platform-ui && npm install && npm run prod-laravel)
@@ -59,6 +60,7 @@ elif [ "$CONTAINER_ROLE" = "ingest" ]; then
     echo "Running platform ingest..."
     gosu www-data:www-data php artisan migrate
     gosu www-data:www-data php artisan platform:sync
+    wait-for-it -t 900 decoder:8090
     gosu www-data:www-data php artisan platform:ingest
 
 elif [ "$CONTAINER_ROLE" = "websocket" ]; then
