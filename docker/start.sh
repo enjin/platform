@@ -58,7 +58,9 @@ if [ "$CONTAINER_ROLE" = "app" ]; then
 
 elif [ "$CONTAINER_ROLE" = "ingest" ]; then
     echo "Running platform ingest..."
+    wait-for-it -t 60 database:3306
     gosu www-data:www-data php artisan migrate
+    # Remove the need of running two separate commands when possible
     gosu www-data:www-data php artisan platform:sync
     wait-for-it -t 900 decoder:8090
     gosu www-data:www-data php artisan platform:ingest
