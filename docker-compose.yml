@@ -46,6 +46,7 @@ services:
     image: enjin/platform:local
     build:
       context: .
+      dockerfile: docker/image/Dockerfile
     restart: unless-stopped
     environment:
       CONTAINER_ROLE: app
