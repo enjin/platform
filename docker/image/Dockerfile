@@ -55,12 +55,14 @@ WORKDIR /var/www/html
 
 # Copy all files
 COPY . .
+RUN rm .env
 
 # Install all dependencies
-RUN composer install --prefer-dist --no-dev --no-interaction --ignore-platform-reqs
-RUN php artisan log-viewer:publish
+RUN composer update --prefer-dist --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 RUN cd vendor/gmajor/sr25519-bindings/go && GOFLAGS=-buildvcs=false go build -buildmode=c-shared -o sr25519.so . && mv sr25519.so ../src/Crypto/sr25519.so
 RUN npm install
+
+# Install platform-ui
 RUN php artisan platform-ui:install --route="/" --tenant="no" --skip
 RUN cd vendor/enjin/platform-ui && npm install && npm run prod-laravel
 RUN php artisan platform-ui:install --route="/" --tenant="no" --skip
