@@ -10,7 +10,7 @@ if [ "$role" = "ingest" ]; then
     echo "Running ingest..."
     php artisan migrate && php artisan platform:sync && php artisan platform:ingest
 elif [ "$role" = "app" ]; then
-    php artisan log-viewer:publish && php artisan platform-ui:install --route="/" --tenant="no" --skip && php artisan route:cache && php artisan view:cache
+    php artisan platform-ui:install --route="/" --tenant="no" --skip && php artisan route:cache && php artisan view:cache
     echo "Running apache..."
     exec apache2-foreground
 elif [ "$role" = "relay" ]; then
