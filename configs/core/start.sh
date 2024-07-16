@@ -17,9 +17,8 @@ elif [ "$role" = "relay" ]; then
     echo "Running relay watcher..."
     php artisan platform:relay-watcher
 elif [ "$role" = "websocket" ]; then
-    echo "Running queue and websocket..."
-    supervisord && supervisorctl start horizon
-    php artisan websockets:serve
+    echo "Running horizon and reverb..."
+    supervisord
 elif [ "$role" = "beam" ]; then
     echo "Running beam..."
     php artisan platform:process-beam-claims

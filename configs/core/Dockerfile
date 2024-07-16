@@ -9,7 +9,7 @@ RUN apt-get update -y && \
 
 # Install imagick and redis
 RUN apt-get install -y libmagickwand-dev --no-install-recommends && \
-    pecl install imagick redis
+    pecl install imagick redis uv
 
 # Install node and npm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - &&\
