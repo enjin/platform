@@ -28,13 +28,13 @@ services:
 
   decoder:
     platform: linux/amd64
-    image: enjin/platform-decoder:latest
+    image: enjin/platform-decoder:v1.9.0
     restart: unless-stopped
     ports:
       - "${DECODER_EXTERNAL_PORT}:8090"
 
   app:
-    image: enjin/platform:latest
+    image: enjin/platform:v1.9.0
     build:
       context: .
       dockerfile: configs/core/Dockerfile
@@ -50,7 +50,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   websocket:
-    image: enjin/platform:latest
+    image: enjin/platform:v1.9.0
     build:
       context: .
       dockerfile: configs/core/Dockerfile
@@ -66,7 +66,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   ingest:
-    image: enjin/platform:latest
+    image: enjin/platform:v1.9.0
     build:
       context: .
       dockerfile: configs/core/Dockerfile
@@ -80,7 +80,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   relay:
-    image: enjin/platform:latest
+    image: enjin/platform:v1.9.0
     build:
       context: .
       dockerfile: configs/core/Dockerfile
@@ -93,7 +93,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   beam:
-    image: enjin/platform:latest
+    image: enjin/platform:v1.9.0
     build:
       context: .
       dockerfile: configs/core/Dockerfile
@@ -107,7 +107,7 @@ services:
 
   daemon:
     platform: linux/amd64
-    image: enjin/wallet-daemon:latest
+    image: enjin/wallet-daemon:v1.9.0
     restart: unless-stopped
     env_file:
       - ./configs/daemon/.env
