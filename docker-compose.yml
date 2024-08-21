@@ -28,7 +28,7 @@ services:
 
   decoder:
     platform: linux/amd64
-    image: enjin/platform-decoder:v1.9.1
+    image: enjin/platform-decoder:v1.10.0
     restart: unless-stopped
     ports:
       - "${DECODER_EXTERNAL_PORT}:8090"
