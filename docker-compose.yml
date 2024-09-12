@@ -28,13 +28,13 @@ services:
 
   decoder:
     platform: linux/amd64
-    image: enjin/platform-decoder:v1.10.0
+    image: enjin/platform-decoder:v2.0.1
     restart: unless-stopped
     ports:
       - "${DECODER_EXTERNAL_PORT}:8090"
 
   app:
-    image: enjin/platform:v1.10.0
+    image: enjin/platform:v1.11.0
     build:
       context: .
       dockerfile: configs/core/Dockerfile
@@ -50,7 +50,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   websocket:
-    image: enjin/platform:v1.10.0
+    image: enjin/platform:v1.11.0
     build:
       context: .
       dockerfile: configs/core/Dockerfile
@@ -66,7 +66,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   ingest:
-    image: enjin/platform:v1.10.0
+    image: enjin/platform:v1.11.0
     build:
       context: .
       dockerfile: configs/core/Dockerfile
@@ -80,7 +80,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   relay:
-    image: enjin/platform:v1.10.0
+    image: enjin/platform:v1.11.0
     build:
       context: .
       dockerfile: configs/core/Dockerfile
@@ -93,7 +93,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   beam:
-    image: enjin/platform:v1.10.0
+    image: enjin/platform:v1.11.0
     build:
       context: .
       dockerfile: configs/core/Dockerfile
