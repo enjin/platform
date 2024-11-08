@@ -1,15 +1,19 @@
 # Stage: setup-web-server
-FROM php:apache-buster AS setup-web-server
+FROM php:8.3-apache AS setup-web-server
 
 # Install dependencies
 RUN apt-get update -y && \
-    apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev python2 && \
+    apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev python3 && \
     apt-get install -y libpq-dev libgmp-dev libsodium-dev libmemcached-dev zlib1g-dev wait-for-it libffi-dev golang-go && \
     apt-get install -y inotify-tools libcurl4-openssl-dev libpq-dev libssl-dev supervisor dos2unix
 
 # Install imagick and redis
 RUN apt-get install -y libmagickwand-dev --no-install-recommends && \
-    pecl install imagick redis uv
+    pecl install redis uv
+
+# This is required on PHP 8.3 (check following issue: https://github.com/Imagick/imagick/issues/640)
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN install-php-extensions imagick/imagick@master
 
 # Install node and npm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - &&\
@@ -17,7 +21,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - &&\
 
 # Install and enable additional php modules
 RUN docker-php-ext-install ffi pdo pdo_mysql gmp bcmath sodium mysqli sockets pcntl gd
-RUN docker-php-ext-enable redis imagick
+RUN docker-php-ext-enable redis
 
 # Stage: create-application
 FROM setup-web-server AS create-application
@@ -25,7 +29,7 @@ FROM setup-web-server AS create-application
 WORKDIR /app/
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-RUN composer create-project laravel/laravel:^10.0 laravel-application
+RUN composer create-project laravel/laravel:^11.0 laravel-application
 
 COPY configs/core/composer.json /app/laravel-application
 COPY configs/core/config/ /app/laravel-application/config/
