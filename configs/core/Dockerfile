@@ -25,7 +25,7 @@ FROM setup-web-server AS create-application
 WORKDIR /app/
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-RUN composer create-project laravel/laravel:^10.0 laravel-application
+RUN composer create-project laravel/laravel:^11.0 laravel-application
 
 COPY configs/core/composer.json /app/laravel-application
 COPY configs/core/config/ /app/laravel-application/config/
