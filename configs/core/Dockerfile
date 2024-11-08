@@ -13,7 +13,7 @@ RUN apt-get install -y libmagickwand-dev --no-install-recommends && \
 
 # This is required on PHP 8.3 (check following issue: https://github.com/Imagick/imagick/issues/640)
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN install-php-extensions imagick
+RUN install-php-extensions imagick/imagick@master
 
 # Install node and npm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - &&\
