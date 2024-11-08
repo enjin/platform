@@ -1,9 +1,9 @@
 # Stage: setup-web-server
-FROM php:apache-buster AS setup-web-server
+FROM php:8.3-apache AS setup-web-server
 
 # Install dependencies
 RUN apt-get update -y && \
-    apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev python2 && \
+    apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev python3 && \
     apt-get install -y libpq-dev libgmp-dev libsodium-dev libmemcached-dev zlib1g-dev wait-for-it libffi-dev golang-go && \
     apt-get install -y inotify-tools libcurl4-openssl-dev libpq-dev libssl-dev supervisor dos2unix
 
