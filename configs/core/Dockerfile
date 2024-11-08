@@ -9,7 +9,11 @@ RUN apt-get update -y && \
 
 # Install imagick and redis
 RUN apt-get install -y libmagickwand-dev --no-install-recommends && \
-    pecl install imagick redis uv
+    pecl install redis uv
+
+# This is required on PHP 8.3 (check following issue: https://github.com/Imagick/imagick/issues/640)
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN install-php-extensions imagick
 
 # Install node and npm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - &&\
@@ -17,7 +21,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - &&\
 
 # Install and enable additional php modules
 RUN docker-php-ext-install ffi pdo pdo_mysql gmp bcmath sodium mysqli sockets pcntl gd
-RUN docker-php-ext-enable redis imagick
+RUN docker-php-ext-enable redis
 
 # Stage: create-application
 FROM setup-web-server AS create-application
