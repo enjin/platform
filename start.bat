@@ -21,6 +21,41 @@ if "%APP_URL%"=="" (
 )
 goto :EOF
 
+:: Function to read the email address from the user
+:read_email
+:: Read the email address from the user
+echo Please input the email address: (e.g. user@example.com)
+set /p NOTIFICATION_EMAIL=
+:: Check if the email address is empty
+if "%NOTIFICATION_EMAIL%"=="" (
+    goto :EOF
+)
+:: Check if the email address is valid
+if not "%NOTIFICATION_EMAIL%"=="%NOTIFICATION_EMAIL: =%" (
+    echo The email address you provided is not valid. Please try again.
+    call :read_email
+)
+goto :EOF
+
+:: Function to check if user already has UPGRADE_NOTIFICATION_EMAIL set
+:check_has_upgrade_notification_email
+:: Check if user already has UPGRADE_NOTIFICATION_EMAIL set
+set "NOTIFICATION_EMAIL="
+for /f "tokens=2 delims==" %%i in ('findstr /r /c:"UPGRADE_NOTIFICATION_EMAIL=" configs\core\.env') do (
+    set "NOTIFICATION_EMAIL=%%i"
+)
+:: If not set, prompt the user
+if "%NOTIFICATION_EMAIL%"=="" (
+    echo If you want to receive notifications with major updates or security notices, please provide an email address, otherwise leave it blank
+    call :read_email
+    :: Check if the email address is empty
+    if "%NOTIFICATION_EMAIL%"=="" (
+        goto :EOF
+    )
+    powershell -Command "(Get-Content 'configs\core\.env') | ForEach-Object {$_ -replace '\bUPGRADE_NOTIFICATION_EMAIL=.*', 'UPGRADE_NOTIFICATION_EMAIL=!NOTIFICATION_EMAIL!'} | Set-Content 'configs\core\.env'"
+)
+goto :EOF
+
 :: Function to generate a new basic auth token and set it in the .env file
 :generate_basic_token
 :: Generate a new basic auth token
@@ -191,6 +226,7 @@ call :check_has_app_url
 call :check_has_basic_token
 call :check_has_daemon_password
 call :check_and_generate_app_key
+call :check_has_upgrade_notification_email
 call :get_daemon_address
 
 :: Prompt the user to start platform services
