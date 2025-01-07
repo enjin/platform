@@ -20,7 +20,7 @@
         }
     ],
     "require": {
-        "php": "^8.3",
+        "php": "^8.3|^8.4",
         "enjin/platform-core": "^2.0",
         "enjin/platform-beam": "^2.0",
         "enjin/platform-fuel-tanks": "^2.0",
@@ -29,7 +29,7 @@
         "guzzlehttp/guzzle": "^7.0",
         "laravel/framework": "^11.0",
         "laravel/horizon": "^5.0",
-        "laravel/reverb": "@beta",
+        "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.0",
         "fakerphp/faker": "^1.0"

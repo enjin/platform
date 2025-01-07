@@ -44,6 +44,43 @@ generate_basic_token() {
     fi
 }
 
+read_email() {
+    # Read the email address from the user
+    echo "Please input the email address: (e.g. user@example.com)"
+    read NOTIFICATION_EMAIL
+
+    # Check if the email address is empty
+    if [ -z "$NOTIFICATION_EMAIL" ]; then
+        return
+    fi
+
+    # Check if the email address is valid
+    if ! [[ $NOTIFICATION_EMAIL =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+        echo "The email address you provided is not valid. Please try again."
+        read_email
+    fi
+}
+
+check_has_upgrade_notification_email() {
+  # Check if user already has UPGRADE_NOTIFICATION_EMAIL set
+  NOTIFICATION_EMAIL=$(awk '$1 ~ /^UPGRADE_NOTIFICATION_EMAIL/' configs/core/.env | cut -d "=" -f 2)
+  if [ -z "$NOTIFICATION_EMAIL" ]; then
+      echo "If you want to receive notifications with major updates or security notices, please provide an email address, otherwise leave it blank"
+      read_email
+
+      # Check if the email address is empty
+      if [ -z "$NOTIFICATION_EMAIL" ]; then
+          return
+      fi
+
+      if [ "$PLATFORM_OS" = "macOS" ]; then
+          sed -i '' -e "s/^UPGRADE_NOTIFICATION_EMAIL=/UPGRADE_NOTIFICATION_EMAIL=$NOTIFICATION_EMAIL/g" configs/core/.env
+      else
+          sed -i "s/^UPGRADE_NOTIFICATION_EMAIL=/UPGRADE_NOTIFICATION_EMAIL=\"$NOTIFICATION_EMAIL\"/g" configs/core/.env
+      fi
+  fi
+}
+
 check_has_basic_token() {
   # Check if user already has BASIC_AUTH_TOKEN set
   AUTH_TOKEN=$(awk '$1 ~ /^BASIC_AUTH_TOKEN/' configs/core/.env | cut -d "=" -f 2)
@@ -176,6 +213,7 @@ check_has_app_url
 check_has_basic_token
 check_has_daemon_password
 check_and_generate_app_key
+check_has_upgrade_notification_email
 get_daemon_address
 
 echo "Do you want to start all platform services? (y/n)"
