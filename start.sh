@@ -55,10 +55,13 @@ read_email() {
     fi
 
     # Check if the email address is valid
-    if ! [[ $NOTIFICATION_EMAIL =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
-        echo "The email address you provided is not valid. Please try again."
-        read_email
-    fi
+    case $NOTIFICATION_EMAIL in
+        *@?*.?*) ;;  # Valid pattern
+        *)
+            echo "The email address you provided is not valid. Please try again."
+            read_email
+            ;;
+    esac
 }
 
 check_has_upgrade_notification_email() {
