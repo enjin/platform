@@ -119,7 +119,6 @@ generate_daemon_password() {
   # Generate a new key pass for the daemon and set to .env file
   WALLET_PASSWORD=$(openssl rand -hex 32)
   echo "Done, your daemon password is: $WALLET_PASSWORD"
-  sed -i '' -e "s/^KEY_PASS=/KEY_PASS=$WALLET_PASSWORD/g" configs/daemon/.env
 
   if [ "$PLATFORM_OS" = "macOS" ]; then
     sed -i '' -e "s/^KEY_PASS=/KEY_PASS=$WALLET_PASSWORD/g" configs/daemon/.env
@@ -154,7 +153,7 @@ get_daemon_address() {
         (docker compose up -d daemon)
         sleep 3
 
-        WALLET_ADDRESS=$(docker compose logs daemon 2>&1 | grep -A2 "Wallet daemon address" | awk '{print $NF}' | tail -n 2)
+        WALLET_ADDRESS=$(docker compose logs daemon 2>&1 | grep -A2 "Enjin Wallet Daemon v2.0.0" | awk '{print $NF}' | tail -n 2)
         echo "Your wallet daemon address is:"
         echo "$WALLET_ADDRESS"
         WALLET_ADDRESS=$(echo "$WALLET_ADDRESS" | head -n 1)
