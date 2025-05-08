@@ -21,25 +21,21 @@
     ],
     "require": {
         "php": "^8.3|^8.4",
-        "enjin/platform-core": "^2.0",
-        "enjin/platform-beam": "^2.0",
-        "enjin/platform-fuel-tanks": "^2.0",
-        "enjin/platform-marketplace": "^2.0",
-        "enjin/platform-ui": "^2.0",
-        "guzzlehttp/guzzle": "^7.0",
-        "laravel/framework": "^11.0",
-        "laravel/horizon": "^5.0",
-        "laravel/reverb": "^1.0",
-        "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.0",
-        "fakerphp/faker": "^1.0"
+        "enjin/platform-core": "^3.0",
+        "enjin/platform-beam": "^3.0",
+        "enjin/platform-ui": "^3.0",
+        "guzzlehttp/guzzle": "^7.9",
+        "laravel/framework": "^11.44",
+        "laravel/horizon": "^5.31",
+        "laravel/reverb": "^1.5",
+        "laravel/sanctum": "^4.1",
+        "laravel/tinker": "^2.10",
+        "fakerphp/faker": "^1.24"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "mockery/mockery": "^1.0",
-        "nunomaduro/collision": "^8.0",
-        "phpunit/phpunit": "^11.0",
-        "spatie/laravel-ignition": "^2.0"
+        "nunomaduro/collision": "^8.8",
+        "spatie/laravel-ignition": "^2.9"
     },
     "autoload": {
         "psr-4": {
