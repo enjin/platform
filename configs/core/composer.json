@@ -21,9 +21,9 @@
     ],
     "require": {
         "php": "^8.3|^8.4",
-        "enjin/platform-core": "^3.0",
-        "enjin/platform-beam": "^3.0",
-        "enjin/platform-ui": "^3.0",
+        "enjin/platform-core": "^3.0.0-alpha",
+        "enjin/platform-beam": "^3.0.0-alpha",
+        "enjin/platform-ui": "^3.0.0-alpha",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.44",
         "laravel/horizon": "^5.31",
